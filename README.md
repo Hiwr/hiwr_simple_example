@@ -19,7 +19,7 @@ See the LICENSE file located in the root directory.
 
 Build
 ----------------------
-It requires hyve\_msg to work properly
+It requires hiwr\_msg to work properly
 
 Execution
 ----------------------
@@ -30,11 +30,11 @@ have a working ROS core running):
 
 Launch using roslaunch:
 
-    $ roslaunch hiwr_simple_example japanexpo.launch 
+    $ roslaunch hiwr_simple_example hiwr_simple_example.launch 
 
 Launch from another launchfile:
 
-    <include file="$(find hiwr\_simple\_example)/japanexpo.launch" />
+    <include file="$(find hiwr\_simple\_example)/hiwr_simple_example.launch" />
  
 Node
 ----------------------
