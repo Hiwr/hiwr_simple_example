@@ -27,21 +27,21 @@
 
 #include <pluginlib/class_list_macros.h>
 
-class Hiwr_simple_example {
+class HiwrSimpleExample {
 public:
     void callbackTS(const hyve_msg::TouchEvent::ConstPtr & touch);
     void callbackROI(const sensor_msgs::RegionOfInterest::ConstPtr &msg);
     void callbackTired(const std_msgs::UInt8::ConstPtr &);
     void loop();
 
-    Hiwr_simple_example(ros::NodeHandle &);
-    ros::NodeHandle nh;
-    bool pressed;
-    std_msgs::String scenarioState;
-    ros::Publisher pub_Scenario;
-    ros::Subscriber sub_tired;
-    bool isSleeping;
-    int last_brightness;
+    HiwrSimpleExample(ros::NodeHandle &);
+    ros::NodeHandle nh_;
+    bool pressed_;
+    std_msgs::String scenario_state_;
+    ros::Publisher pub_scenario_;
+    ros::Subscriber sub_tired_;
+    bool is_sleeping_;
+    int last_brightness_;
 protected:
 
 private:

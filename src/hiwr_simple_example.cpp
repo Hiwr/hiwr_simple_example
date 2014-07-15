@@ -1,78 +1,78 @@
 #include "hiwr_simple_example.h"
 
-Hiwr_simple_example::Hiwr_simple_example(ros::NodeHandle &n):
-    nh(n)
+HiwrSimpleExample::HiwrSimpleExample(ros::NodeHandle &n):
+    nh_(n)
 {
 }
 
-void Hiwr_simple_example::callbackTS(const hyve_msg::TouchEvent::ConstPtr & touch) {
+void HiwrSimpleExample::callbackTS(const hyve_msg::TouchEvent::ConstPtr & touch) {
     ROS_INFO("Entering callback TOUCH");
 
-    pressed = touch->pressed;
+    pressed_ = touch->pressed;
 }
 
-void Hiwr_simple_example::callbackROI(const sensor_msgs::RegionOfInterest::ConstPtr &msg) {
+void HiwrSimpleExample::callbackROI(const sensor_msgs::RegionOfInterest::ConstPtr &msg) {
     ROS_INFO("Catching someone's face");
-    scenarioState.data = "8";
-    pub_Scenario.publish(scenarioState);
+    scenario_state_.data = "8";
+    pub_scenario_.publish(scenario_state_);
 
     ros::Duration(1).sleep();
-    scenarioState.data = "6";
-    pub_Scenario.publish(scenarioState);
+    scenario_state_.data = "6";
+    pub_scenario_.publish(scenario_state_);
 }
 
-void Hiwr_simple_example::callbackTired(const std_msgs::UInt8::ConstPtr &msg){
+void HiwrSimpleExample::callbackTired(const std_msgs::UInt8::ConstPtr &msg){
  // ROS_INFO("Getting new tired value: %d and bright = %d", msg->data, last_brightness);	
 //Retrieve first brightness value
-  	last_brightness = msg->data;
+  	last_brightness_ = msg->data;
   
 	//Mean last_value with new data
-	if((msg->data+last_brightness)*0.5 < 25){
-		isSleeping = true;
+	if((msg->data+last_brightness_)*0.5 < 25){
+		is_sleeping_ = true;
     ROS_INFO("Going to sleep");
 	}
-	else isSleeping = false;
+	else is_sleeping_ = false;
 }
 
-void Hiwr_simple_example::loop(){
+void HiwrSimpleExample::loop(){
     ros::Rate loop_rate(10);
-    pressed = false;
+    pressed_ = false;
     ROS_INFO("Initializing subsriber");
     ros::Subscriber sub_ts;
     ros::Subscriber sub_roi;
-    isSleeping = false;
-    last_brightness = -1;
-    sub_ts = nh.subscribe("/hiwr_touchscreen/touch_event",1, &Hiwr_simple_example::callbackTS,this);
-    //sub_roi = nh.subscribe<sensor_msgs::RegionOfInterest>("/hiwr_opencv_detector/roi", 1, &Hiwr_simple_example::callbackROI, this);
-    pub_Scenario = nh.advertise<std_msgs::String>("/scenario/state", 1);
-    sub_tired = nh.subscribe("/hiwr_tired/brightness", 1, &Hiwr_simple_example::callbackTired, this);
-    bool sendSleep = false;
-    bool sendWakeup = false;
+    is_sleeping_ = false;
+    last_brightness_ = -1;
+    sub_ts = nh_.subscribe("/hiwr_touchscreen/touch_event",1, &HiwrSimpleExample::callbackTS,this);
+    //sub_roi = nh.subscribe<sensor_msgs::RegionOfInterest>("/hiwr_opencv_detector/roi", 1, &HiwrSimpleExample::callbackROI, this);
+    pub_scenario_ = nh_.advertise<std_msgs::String>("/scenario/state", 1);
+    sub_tired_ = nh_.subscribe("/hiwr_tired/brightness", 1, &HiwrSimpleExample::callbackTired, this);
+    bool send_sleep = false;
+    bool send_wakeup = false;
     while(ros::ok()) {
-        if(pressed && !isSleeping) {
+        if(pressed_ && !is_sleeping_) {
 
             ROS_INFO("Pressed");
-            scenarioState.data = "7"; // grumpy face
-            pub_Scenario.publish(scenarioState);
+            scenario_state_.data = "7"; // grumpy face
+            pub_scenario_.publish(scenario_state_);
             ros::Duration(2).sleep();
-            scenarioState.data = "6";
-            pub_Scenario.publish(scenarioState);
+            scenario_state_.data = "6";
+            pub_scenario_.publish(scenario_state_);
             //ros::Publisher pub = nh.advertise<hyve_msg::TouchEvent>("hyve_screen", sizeof(hyve_msg::TouchEvent));
 
-        }else if(isSleeping && !sendSleep){
-		scenarioState.data="3";
-		pub_Scenario.publish(scenarioState);
+        }else if(is_sleeping_ && !send_sleep){
+		scenario_state_.data="3";
+		pub_scenario_.publish(scenario_state_);
 		ros::Duration(1).sleep();
-		scenarioState.data="4";
-		pub_Scenario.publish(scenarioState);
-		sendSleep = true;
-		sendWakeup = false;	
-	}else if(!isSleeping && !sendWakeup){
-		scenarioState.data="6";
-		pub_Scenario.publish(scenarioState);
+        scenario_state_.data="4";
+		pub_scenario_.publish(scenario_state_);
+		send_sleep = true;
+		send_wakeup = false;	
+	}else if(!is_sleeping_ && !send_wakeup){
+        scenario_state_.data="6";
+        pub_scenario_.publish(scenario_state_);
 		
-		sendSleep = false;
-		sendWakeup = true;
+		send_sleep = false;
+		send_wakeup = true;
 	}
         loop_rate.sleep();
         ros::spinOnce();
@@ -82,10 +82,10 @@ void Hiwr_simple_example::loop(){
 
 int main(int argc, char ** argv) {
     ROS_INFO("Initializing...");
-    ros::init(argc, argv, "hiwr_simple_example");
+    ros::init(argc, argv, "HiwrSimpleExample");
     ros::NodeHandle n;
 
-    Hiwr_simple_example node(n);
+    HiwrSimpleExample node(n);
     node.loop();
 
 

@@ -32,12 +32,12 @@
 <node pkg="nodelet" type="nodelet" name="nodelet_manager_top" args="manager"/>
 
 <!-- Then launch camera_controller nodelet-->
-<node pkg="nodelet" type="nodelet" name="camera_top" args="load hiwr_camera_controller/Hiwr_camera_controller_nodelet nodelet_manager_top" output="screen">
+<node pkg="nodelet" type="nodelet" name="camera_top" args="load hiwr_camera_controller/HiwrCameraControllerNodelet nodelet_manager_top" output="screen">
 	<rosparam file="$(find hiwr_camera_controller)/param/config_Microsoft_Lifecam_Cinema.yaml"/>
 </node>
 
 <!-- Launch hiwr_opencv_detector-->
-<node pkg="nodelet" type="nodelet" name="hiwr_opencv_detector" args="load hiwr_opencv_detector/Hiwr_opencv_detector_nodelet nodelet_manager_top" output="screen">
+<node pkg="nodelet" type="nodelet" name="hiwr_opencv_detector" args="load hiwr_opencv_detector/HiwrOpencvDetectorNodelet nodelet_manager_top" output="screen">
 	<param name="video_stream" type="str" value="camera_top/output_video" />
 	<param name="haarfile" type="str" value="lbpcascade_frontalface.xml" />
 </node>
@@ -47,7 +47,7 @@ p
 <node pkg="hiwr_screen" type="screen.py" name="hiwr_screen" />
 
 <!-- Launch hiwr_tired -->
-<node pkg="nodelet" type="nodelet" name="hiwr_tired" args="load hiwr_tired/Hiwr_tired_nodelet nodelet_manager_top" output="screen">
+<node pkg="nodelet" type="nodelet" name="hiwr_tired" args="load hiwr_tired/HiwrTiredNodelet nodelet_manager_top" output="screen">
 	<param name="video_stream" type="str" value="camera_top/output_video"/>
 </node>
 
